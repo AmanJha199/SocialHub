@@ -1,16 +1,40 @@
-import React from 'react'
-import {Link} from 'react-router-dom';
+import React, { useContext } from 'react'
+import { Link, useHistory } from 'react-router-dom';
+import { UserContext } from '../App'
 
-function Navbar() {
+
+const Navbar = () => {
+    const { state, dispatch } = useContext(UserContext)
+    const history = useHistory()
+    const renderList = () => {
+        if (state) {
+            return [
+                <li><Link to="/profile">Profile</Link></li>,
+                <li><Link to="/create">Create Post</Link></li>,
+                <li>
+                    <button className="btn #c62828 red darken-3"
+                        onClick={() => {
+                        localStorage.clear()
+                        dispatch({type: "CLEAR"}) 
+                        history.push('/signin')
+                        }}>
+                        Logout
+                    </button>
+                </li>
+            ]
+        } else {
+            return [
+                <li><Link to="/signin">Sign in</Link></li>,
+                <li><Link to="/signup">Sign up</Link></li>
+            ]
+        }
+    }
     return (
         <nav>
             <div className="nav-wrapper white">
-                <Link to="/" className="brand-logo left">Sociol-Hub</Link>
+                <Link to={state ? '/' : '/signin'} className="brand-logo left">Sociol-Hub</Link>
                 <ul id="nav-mobile" className="right">
-                    <li><Link to="/signin">Sign in</Link></li>
-                    <li><Link to="signup">Sign up</Link></li>
-                    <li><Link to="profile">Profile</Link></li>
-                    <li><Link to="create">Create Post</Link></li>
+                    {renderList()}
                 </ul>
             </div>
         </nav>

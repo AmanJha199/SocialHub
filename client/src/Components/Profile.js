@@ -1,6 +1,23 @@
-import React from 'react'
+import React,{useEffect, useState, useContext} from 'react'
+import {UserContext} from '../App'
 
-function Profile() {
+const Profile = () => {
+    const [profile, setProfile] = useState([])
+    const {state, dispatch} = useContext(UserContext)
+    //console.log(state);
+    
+    useEffect(() => {
+        fetch('/mypost', {
+            headers:{
+                "Authorization" : "Bearer " + localStorage.getItem("jwt")
+            }
+        })
+        .then(res => res.json())
+        .then(result => {
+            //console.log(result);
+            setProfile(result.mypost)
+        })
+    },[])
     return (
         <div style={{maxWidth:"600px", margin:"0px auto"}}>
             <div style={{
@@ -15,7 +32,7 @@ function Profile() {
                     />
                 </div>
                 <div>
-                    <h4>Aman Jha</h4>
+                    <h4>{state?state.name:"loading"}</h4>
                     <div style={{
                         display:"flex",
                         justifyContent:"space-between", 
@@ -30,16 +47,13 @@ function Profile() {
             
             {/* gallery container */}
             <div className="gallery">
-                <img className = "item" src ="https://images.pexels.com/photos/1680172/pexels-photo-1680172.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500"/>
-                <img className = "item" src ="https://images.pexels.com/photos/1680172/pexels-photo-1680172.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500"/>
-                <img className = "item" src ="https://images.pexels.com/photos/1680172/pexels-photo-1680172.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500"/>
-                <img className = "item" src ="https://images.pexels.com/photos/1680172/pexels-photo-1680172.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500"/>
-                <img className = "item" src ="https://images.pexels.com/photos/1680172/pexels-photo-1680172.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500"/>
-                <img className = "item" src ="https://images.pexels.com/photos/1680172/pexels-photo-1680172.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500"/>
-                <img className = "item" src ="https://images.pexels.com/photos/1680172/pexels-photo-1680172.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500"/>
-                <img className = "item" src ="https://images.pexels.com/photos/1680172/pexels-photo-1680172.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500"/>
-                <img className = "item" src ="https://images.pexels.com/photos/1680172/pexels-photo-1680172.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500"/>
-
+                {
+                    profile.map(item => {
+                        return(
+                            <img className = "item" src ={item.photo} alt={item.title}/>
+                        )
+                    })
+                }
             </div>
         </div>
     )
